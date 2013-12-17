@@ -1,1 +1,3 @@
 jmx_client-parser*.gem
+.rbenv-version
+.ruby-version
