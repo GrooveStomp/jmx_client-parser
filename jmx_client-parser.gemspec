@@ -13,7 +13,7 @@ Gem::Specification.new do |gem|
   gem.summary       = %q{Utility to parse cmdline-jmxclient output into Ruby hash data.}
   gem.homepage      = 'https://github.com/GrooveStomp/jmx_client-parser'
 
-  gem.files         = `git ls-files`.split($/)
+  gem.files         = Dir['lib/**/*.rb']
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.require_paths = ['lib']
