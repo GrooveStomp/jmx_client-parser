@@ -58,16 +58,16 @@ Then CmdlineJmxclientOutputParser will give us a result like:
 ```Ruby
 {
   'HeapMemoryUsage' => {
-    committed: '2242...',
-    init: '167...',
-    max: '259...',
-    used: '145...'
+    'committed' => '2242...',
+    'init' => '167...',
+    'max' => '259...',
+    'used' => '145...'
   },
   'NonHeapMemoryUsage' => {
     'committed' => '258...',
     'init' => '127...',
     'max' => '100...',
-    'used: '256...'
+    'used' => '256...'
   }
 }
 ```
