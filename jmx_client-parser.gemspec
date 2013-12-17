@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'jmx_client/parser/version'
 
 Gem::Specification.new do |gem|
-  gem.name          = 'jmx_client/parser'
+  gem.name          = 'jmx_client-parser'
   gem.version       = JmxClient::Parser::VERSION
   gem.authors       = ['Aaron Oman']
   gem.email         = ['aaron@unbounce.com']
