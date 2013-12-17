@@ -7,7 +7,7 @@ into a nice, usable Ruby hash.
 Add this line to your project's Gemfile:
 
 ```
-gem 'jmx_client/parser'
+gem 'jmx_client-parser'
 ```
 
 Then execute:
