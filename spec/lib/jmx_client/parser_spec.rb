@@ -45,8 +45,4 @@ describe JmxClient::Parser do
     end
   end
 
-  context 'compound outputs and single line outputs' do
-    let(:command) {}
-  end
-
 end
