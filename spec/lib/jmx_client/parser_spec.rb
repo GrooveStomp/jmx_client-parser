@@ -10,7 +10,7 @@ describe JmxClient::Parser do
   let(:parsed_output) { JmxClient::Parser.parse(output) }
   subject { parsed_output }
 
-  context 'compound outputs' do
+  describe 'compound outputs' do
     let(:command) { "#{default_command} java.lang:type=Memory HeapMemoryUsage NonHeapMemoryUsage" }
 
     specify { subject.keys.count.should == 2 }
@@ -20,11 +20,10 @@ describe JmxClient::Parser do
       attributes.each { |attribute| subject.keys.should include(attribute) }
     end
 
-    describe 'sub attributes' do
+    context 'sub attributes' do
       subject { parsed_output }
 
       it 'has all sub attributes' do
-        debugger
         expected = %w(committed init max used)
         subject.each do |_, actual|
           expected.each { |sub_attribute| actual.keys.should include(sub_attribute) }
@@ -35,8 +34,15 @@ describe JmxClient::Parser do
 
   end
 
-  context 'multiple single line outputs' do
-    let(:command) {}
+  describe 'multiple single line outputs' do
+    let(:command) { "#{default_command} java.lang:type=Threading ThreadCount PeakThreadCount" }
+
+    its(:keys) { should == %w(ThreadCount PeakThreadCount) }
+
+    context 'values' do
+      subject { parsed_output.values }
+      specify { subject.each { |s| s.to_i.to_s.should == s } } # They are actual integers.
+    end
   end
 
   context 'compound outputs and single line outputs' do
