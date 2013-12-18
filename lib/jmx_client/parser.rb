@@ -36,6 +36,19 @@ module JmxClient
 
     private
 
+      def parse_all_output(output)
+        # TODO: AOMAN:
+        # We need to loop through all lines. I don't think we can just slurp it all in like this...
+        # Look at PageServer:name=SqSManager averageLatencyMillis lastLatencyMillis output.
+        # It is not of the "compound" format that was anticipated.
+
+        if single_line?(output)
+          parse_single_line(output)
+        elsif multiline?(output)
+          parse_multiple_lines(output)
+        end
+      end
+
       def single_line?(output)
         regex = %r(^
           [0-9/]+\s+    # Matches calendar day, like 12/12/2013.
@@ -50,20 +63,6 @@ module JmxClient
 
       def multiline?(output)
         output.match(MULTILINE_FIRST)
-      end
-
-      def parse_all_output(output)
-
-        # TODO: AOMAN:
-        # We need to loop through all lines. I don't think we can just slurp it all in like this...
-        # Look at PageServer:name=SqSManager averageLatencyMillis lastLatencyMillis output.
-        # It is not of the "compound" format that was anticipated.
-
-        if single_line?(output)
-          parse_single_line(output)
-        elsif multiline?(output)
-          parse_multiple_lines(output)
-        end
       end
 
       # cmd_output looks like:
