@@ -64,32 +64,6 @@ module JmxClient
         elsif multiline?(output)
           parse_multiple_lines(output)
         end
-
-
-        <<-'FOO'
-        report = {}
-        current_attribute = nil
-
-        output.each_line do |line|
-          case
-            when first_line?(line)
-              _, _, _, bean, attribute, _ = split_single_line(line)
-              report[attribute] = {}
-              current_attribute = attribute
-            when data_line?(line)
-              next if current_attribute.nil?
-              sub_attribute, value = line.split(' ')
-              sub_attribute = sub_attribute[0..-2] # Drop the trailing ':'
-              value = value.chomp
-              report[current_attribute][sub_attribute] = value
-            when last_line?(line)
-              current_attribute = nil
-          end
-        end
-
-        report
-        FOO
-
       end
 
       # cmd_output looks like:
