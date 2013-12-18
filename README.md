@@ -24,7 +24,15 @@ $ gem install jmx_client-parser
 
 ##Usage
 
-First capture the output of cmdline-jmxclient into a string separated by newlines.  
+First, require the gem:
+
+```Ruby
+require 'jmx_client/parser'
+```
+
+Now capture the output of cmdline-jmxclient into a string separated by newlines.  
+**Note**: Before you can run this, you must have a java client actually running!
+
 For example:
 
 ```Ruby

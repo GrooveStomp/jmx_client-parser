@@ -36,16 +36,15 @@ module JmxClient
 
     private
 
-      def parse_all_output(output)
-        # TODO: AOMAN:
-        # We need to loop through all lines. I don't think we can just slurp it all in like this...
-        # Look at PageServer:name=SqSManager averageLatencyMillis lastLatencyMillis output.
-        # It is not of the "compound" format that was anticipated.
-
-        if single_line?(output)
-          parse_single_line(output)
-        elsif multiline?(output)
-          parse_multiple_lines(output)
+      def parse_all_output(cmd_output, formatted_output = {})
+        if cmd_output.nil? || cmd_output.empty?
+          return formatted_output
+        elsif single_line?(cmd_output)
+          remaining, formatted = parse_single_line(cmd_output)
+          return parse_all_output(remaining, formatted_output.merge(formatted))
+        elsif multiline?(cmd_output)
+          remaining, formatted = parse_multiple_lines(cmd_output)
+          return parse_all_output(remaining, formatted_output.merge(formatted))
         end
       end
 
@@ -68,9 +67,18 @@ module JmxClient
       # cmd_output looks like:
       # 12/12/2013 19:11:28 +0000 org.archive.jmx.Client ThreadCount: 45
       #
+      # Output:
+      # [
+      #   <cmd_output, less the first line>
+      #   <Ruby hash representation of first line of cmd_output>
+      # ]
+      #
       def parse_single_line(cmd_output)
         _, _, _, bean, attribute, value = split_single_line(cmd_output)
-        { attribute => value.chomp }
+        [
+          drop_first_line(cmd_output),
+          { attribute => value.chomp }
+        ]
       end
 
       # cmd_output looks like:
@@ -85,6 +93,10 @@ module JmxClient
         end
       end
 
+      def drop_first_line(cmd_output)
+        cmd_output.split("\n").drop(1).join("\n")
+      end
+
       def first_line?(output_line)
         output_line.match(MULTILINE_FIRST)
       end
@@ -97,7 +109,7 @@ module JmxClient
         output_line.match(MULTILINE_LAST)
       end
 
-      # Output looks like:
+      # cmd_output looks like:
       # 12/12/2013 19:11:19 +0000 org.archive.jmx.Client HeapMemoryUsage:
       # committed: 22429696
       # init: 16777216
@@ -126,11 +138,17 @@ module JmxClient
       #   }
       # }
       #
-      def parse_multiple_lines(output)
+      # #parse_multiple_lines returns an array:
+      # [
+      #   <unconsumed portion of cmd_output>,
+      #   <formatted output from consumed portion of cmd_output>
+      # ]
+      #
+      def parse_multiple_lines(cmd_output)
         report = {}
         current_attribute = nil
 
-        output.each_line do |line|
+        cmd_output.each_line do |line|
           case
             when first_line?(line)
               _, _, _, bean, attribute, _ = split_single_line(line)
@@ -147,7 +165,7 @@ module JmxClient
           end
         end
 
-        report
+        ["", report]
       end
 
   end
