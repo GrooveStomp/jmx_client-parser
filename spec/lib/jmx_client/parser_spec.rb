@@ -45,4 +45,9 @@ describe JmxClient::Parser do
     end
   end
 
+  describe 'missing bean' do
+    let(:command) { "#{default_command} MyBean:name=MyName MyAttribute" }
+    its(:keys) { should be_empty }
+  end
+
 end

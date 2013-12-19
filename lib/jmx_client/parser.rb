@@ -39,6 +39,9 @@ module JmxClient
       def parse_all_output(cmd_output, formatted_output = {})
         if cmd_output.nil? || cmd_output.empty?
           return formatted_output
+        elsif bean_not_registered?(cmd_output)
+          remaining = drop_first_line(cmd_output)
+          return parse_all_output(remaining, formatted_output)
         elsif single_line?(cmd_output)
           remaining, formatted = parse_single_line(cmd_output)
           return parse_all_output(remaining, formatted_output.merge(formatted))
@@ -46,6 +49,11 @@ module JmxClient
           remaining, formatted = parse_multiple_lines(cmd_output)
           return parse_all_output(remaining, formatted_output.merge(formatted))
         end
+      end
+
+      def bean_not_registered?(output)
+        regex = %r(is not a registered bean)
+        output.dup.split("\n").shift.chomp.match(regex)
       end
 
       def single_line?(output)
